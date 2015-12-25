@@ -3,7 +3,7 @@
 #
 
 require "pi_piper"
-
+require "optparse"
 include Math
 
 # parameter
@@ -23,10 +23,21 @@ def res2temp(rs)
   return B*T0/(T0*log(rs/R0) + B)
 end
 
+opt = OptionParser.new 
+
+OPT = {} 
+opt.on("--loop") {OPT[:loop] = true}
+opt.on("--test") {OPT[:test] = true}
+opt.on("--hour=[duration]") {|t| OPT[:hour] = t.to_i}
+opt.parse!(ARGV)
+
+OPT[:hour] = 0 if !OPT.has_key? :hour
+
+start_time = Time.now 
 
 PiPiper::Spi.begin do |spi|
 
-  (6*60).times do 
+  loop do 
   
     rs = []
     10.times do 
@@ -49,6 +60,9 @@ PiPiper::Spi.begin do |spi|
 
     wait_time = 50 - date.sec
     wait_time += 10 if wait_time < 0
+
+    break if date - start_time > OPT[:hour] * 3600 
+
     sleep wait_time 
     
   end
