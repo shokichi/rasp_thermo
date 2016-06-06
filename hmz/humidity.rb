@@ -3,7 +3,9 @@
 # calcuration humidity
 # HMZ 433a1
 
+require "pi_piper"
 require "optparse"
+require File.expand_path(File.dirname(__FILE__)+"/"+"hmz.rb")
 include Math
 
 
